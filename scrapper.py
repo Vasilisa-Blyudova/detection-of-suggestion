@@ -1,5 +1,6 @@
 import json
 import time
+# import request
 from pathlib import Path
 from typing import Union, Pattern
 
@@ -122,7 +123,8 @@ class BaseCrawler:
         """
 
         self._config = config
-        self.urls = []
+        self._urls = []
+        self.vendor_codes = []
 
     def _extract_url(self, vendor_code: str) -> str:
         """
@@ -134,7 +136,6 @@ class BaseCrawler:
         """
         Finds vendor code for all products
         """
-        ids = []
         for seed_url in self._config.get_seed_urls():
             response = make_request(seed_url, self._config)
             if not response.ok:
@@ -145,14 +146,18 @@ class BaseCrawler:
 
             products = response['data']['products']
             for product in products:
-                vendor_code = product['id']
-                ids.append(str(vendor_code))
+                self.vendor_codes.append(str(product['id']))
 
-        for code in ids:
-            if len(self.urls) == self._config.get_num_descriptions():
+    def collect_urls(self):
+        for vendor_code in self.vendor_codes:
+            if len(self._urls) == self._config.get_num_descriptions():
                 break
-            url = self._extract_url(code)
-            self.urls.append(url)
+            url = self._extract_url(vendor_code)
+            self._urls.append(url)
+
+
+    def get_urls(self):
+        return self._urls
 
     def get_search_urls(self) -> list:
         """
@@ -222,9 +227,11 @@ if __name__ == "__main__":
     config = Config(CRAWLER_CONFIG_PATH)
     crawler = BaseCrawler(config)
     crawler.find_vendor_code()
+    crawler.collect_urls()
+    urls = crawler.get_urls()
     click = ClickDescription(config)
     descriptions = []
-    for url in crawler.urls:
+    for url in urls:
         descriptions.append(click.find_description(url))
 
     df = pd.DataFrame({'wb_descriptions': descriptions}).to_csv('data.csv')
