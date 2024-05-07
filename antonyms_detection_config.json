@@ -1,0 +1,11 @@
+{
+    "seed_urls": [
+        "https://dic.academic.ru/contents.nsf/dic_antonyms/",
+        "https://phraseologiya.academic.ru/"
+    ],
+    "headers": {"user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"},
+    "total_descriptions_to_find_and_parse": 80,
+    "encoding": "utf-8",
+    "timeout": 2,
+    "headless_mode": true
+}
