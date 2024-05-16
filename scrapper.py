@@ -222,6 +222,15 @@ class ClickDescription(BaseCrawler, ChromeDriverMixIn):
         button.send_keys(Keys.RETURN)
         time.sleep(2)
 
+def save_dataset(data):
+    new_data = []
+    for text in data:
+        if 100 < len(text.split()) < 200 and text not in new_data:
+            new_data.append(text)
+    print(len(new_data))
+
+    df = pd.DataFrame({'wb_descriptions': new_data[:100]}).to_csv('dataset.csv')
+
 
 if __name__ == "__main__":
     config = Config(CRAWLER_CONFIG_PATH)
@@ -234,4 +243,4 @@ if __name__ == "__main__":
     for url in urls:
         descriptions.append(click.find_description(url))
 
-    df = pd.DataFrame({'wb_descriptions': descriptions}).to_csv('data.csv')
+    save_dataset(descriptions)
