@@ -26,12 +26,14 @@ from config.constants import ASSETS_PATH, DATA_PATH
 
 os.environ["DEEPPAVLOV_MODELS_PATH"] = "D:\deeppavlov"
 
+
 def load_data(path, format="csv"):
     if format == 'csv':
         data = pd.read_csv(path)
     else:
         data = pd.read_excel(path, engine="openpyxl")
     return data
+
 
 # xlm-roberta reference
 
@@ -45,6 +47,7 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, index: int) -> tuple[str, ...]:
         return (str(self.data["wb_descriptions"].iloc[index]),)
+
 
 class LLMPipeline:
     def __init__(self, model_name: str, dataset: CustomDataset,
@@ -81,7 +84,7 @@ class LLMPipeline:
             return_tensors="pt"
         )
         tokens = self._tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
-#         print(tokens)
+        #         print(tokens)
 
         logits = self._model(**inputs).logits
         predictions = torch.argmax(logits, dim=2)
@@ -89,10 +92,11 @@ class LLMPipeline:
         predicted_tokens_classes = [self._model.config.id2label[t.item()] for t in predictions[0]]
         return predicted_tokens_classes
 
+
 # Stanza
 
 def analyzes_stanza_ner(text):
-    nlp = stanza.Pipeline(lang='ru', processors='tokenize,ner')
+    nlp = stanza.Pipeline(lang='ru', processors='tokenize,ner', download_method=None)
     doc = nlp(text)
 
     tokens = []
@@ -102,23 +106,26 @@ def analyzes_stanza_ner(text):
 
     return tokens
 
+
 # Deep Pavlov
 
 def analyzes_deeppavlov_ner(text):
     text = [text]
-#     with configs.ner.ner_rus_bert.open(encoding='utf8') as f:
-#         ner_config = json.load(f)
-#     ner_config['metadata']['variables']['ROOT_PATH'] = '.\deeppavlov_data'
-#
-#     ner_model = build_model(ner_config, download=True)
-    ner_model = build_model('ner_rus_bert', download=True, install=True)
+    # with configs.ner.ner_rus_bert.open(encoding='utf8') as f:
+    #     ner_config = json.load(f)
+    # ner_config['metadata']['variables']['ROOT_PATH'] = '.\deeppavlov_data'
+    #
+    # ner_model = build_model(ner_config, download=True)
+    ner_model = build_model("ner_rus_bert", download=True, install=True)
 
     tokens = []
     for words, labels in zip(ner_model(text)[0], ner_model(text)[1]):
+        print(ner_model(text)[0])
         for token, label in zip(words, labels):
             if label != "O":
                 tokens.append(token)
-    return tokens
+    # return tokens
+
 
 # Natasha
 
@@ -138,48 +145,27 @@ def analyzes_natasha_ner(text):
 
     return tokens
 
-# sparknlp
-
-def analyzes_spartlp_ner(text):
-    spark = sparknlp.start()
-    pipeline = PretrainedPipeline('entity_recognizer_sm', lang='ru')
-    result = pipeline.annotate(text)
-    return result['ner']
 
 def main():
     dataset = load_data(DATA_PATH)
-#     dataset = pd.DataFrame({'wb_descriptions': '''Универсальный фиксатор для бровей PÚSY Brow
-#     Fix, добро пожаловать в удивительный мир косметики и ухода за вашими бровями! Гель пуси для
-#     бровей с эффектом ламинирования 5 мл - идеальный выбор для надежной и долговременной фиксации.
-#     Невидимый при нанесении, этот гель поможет вам создать безупречную укладку бровей. Благодаря
-#     уникальному составу, включающему специальные питательные вещества, фиксатор для бровей способен
-#     питать и укреплять волоски, придавая им здоровый и ухоженный вид. Вы никогда не подозревали,
-#     насколько важна правильная фиксация и уход за бровями, пока не попробовали этот продукт.
-#     Фиксируйте свои брови с уверенностью!'''})
 
     # xlm-roberta
-    dataset = CustomDataset(dataset)
-    device = 'cpu'
-    batch_size = 1
-    max_length = 120
-    model = "FacebookAI/xlm-roberta-large-finetuned-conll03-english"
-    pipeline = LLMPipeline(model, dataset, batch_size, device)
-    res = pipeline.infer_sample(next(iter(dataset)))
-    predictions_df = pipeline.infer_dataset()
-    print(predictions_df["predictions"])
+    # dataset = CustomDataset(dataset)
+    # device = 'cpu'
+    # batch_size = 1
+    # model = "FacebookAI/xlm-roberta-large-finetuned-conll03-english"
+    # pipeline = LLMPipeline(model, dataset, batch_size, device)
+    # # res = pipeline.infer_sample(next(iter(dataset)))
+    # predictions_df = pipeline.infer_dataset()
+    # print(predictions_df["predictions"])
 
-#     for text in dataset['wb_descriptions']:
-# #         print(analyzes_stanza_ner(text))
-# #         analyzes_deeppavlov_ner(text)
-# #         print(analyzes_natasha_ner(text))
-# #         print()
-# #         print(analyzes_spartlp_ner(text))
-#
-#
-#
-#
-#
-#     # Stanza
+    for text in dataset['wb_descriptions'][:1]:
+        # stanza
+        # print(analyzes_stanza_ner(text))
+        # deeppavlov
+        print(analyzes_deeppavlov_ner(text))
+        # natasha
+        # print(analyzes_natasha_ner(text))
 
 
 if __name__ == "__main__":

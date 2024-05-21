@@ -15,17 +15,22 @@ def load_data(path, format="csv"):
         data = pd.read_excel(path, engine="openpyxl")
     return data
 
-def analyzes_pymorphy(tag: set, text):
+
+def analyzes_pymorphy(tags: list, text):
     morph = pymorphy2.MorphAnalyzer()
     tokens = []
 
     for token in text.split():
-        if morph.parse(token) and tag in morph.parse(token)[0].tag:
-            tokens.append(token)
+        if morph.parse(token):
+            for tag in tags:
+                if tag in morph.parse(token)[0].tag:
+                    tokens.append(token)
 
     return tokens
 
+
 def analyzes_spacy(pos, text):
+    # python - m spacy download ru_core_news_sm
     nlp = spacy.load("ru_core_news_sm")
     doc = nlp(text)
 
@@ -33,17 +38,19 @@ def analyzes_spacy(pos, text):
 
     for token in doc:
         if token.pos_ == pos:
-              tokens.append(token)
+            tokens.append(token)
 
     return tokens
+
 
 def analyzes_stanza(pos, text):
     nlp = stanza.Pipeline('ru', verbose=False)
     doc = nlp(text)
     tokens = [word.text for sentence in doc.sentences for token in sentence.tokens
-                 for word in token.words if word.upos == pos]
+              for word in token.words if word.upos == pos]
 
     return tokens
+
 
 def analyzes_natasha(pos, text):
     segmenter = Segmenter()
@@ -63,11 +70,12 @@ def analyzes_natasha(pos, text):
 
     return tokens
 
+
 def main():
     dataset = load_data(DATA_PATH)
 
     for text in dataset['wb_descriptions'][:10]:
-        print(analyzes_pymorphy({"NUMR"}, text))
+        print(analyzes_pymorphy(["NUMR", "NUMB", "Anum"], text))
         print(analyzes_spacy("NUM", text))
         print(analyzes_stanza("NUM", text))
         print(analyzes_natasha("NUM", text))

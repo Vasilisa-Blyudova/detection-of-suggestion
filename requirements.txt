@@ -24,4 +24,5 @@ datasets==2.18.0
 spark-nlp==5.3.3
 pyspark==3.5.1
 taaled==0.32
-pylats==0.37
+pylats==0.33
+tokenizers==0.19.1
