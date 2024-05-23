@@ -19,7 +19,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from urllib3 import Retry
 
-from config.constants import CRAWLER_CONFIG_PATH, URL
+from config.constants import (CRAWLER_DICTIONARY_CONFIG_PATH,
+                              PHRASEOLOGICAL_UNITS_DICT, URL)
 from core_utils.config_dto import ConfigDTO
 from core_utils.scrapper import AbstractBaseCrawler
 
@@ -100,7 +101,7 @@ class BaseCrawlerPhraseologicalUnits(AbstractBaseCrawler):
             url = self._extract_url(item)
             full_url_ = urljoin(self._config.get_seed_urls()[1], url)
             if full_url_ not in self.urls:
-               self.urls.append(full_url_)
+                self.urls.append(full_url_)
 
     def find_phraseological_units(self):
         for url in self.urls:
@@ -118,13 +119,11 @@ class BaseCrawlerPhraseologicalUnits(AbstractBaseCrawler):
 
     def get_dictionary(self):
         dictionary = pd.DataFrame({'phraseological_units': self.phraseological_units})
-        return dictionary.to_csv(Path('D:\Документы\ВКР\detection-of-suggestion\\assets\phraseological_units_dictionary.csv'), index=False)
-
-
+        return dictionary.to_csv(PHRASEOLOGICAL_UNITS_DICT, index=False)
 
 
 if __name__ == "__main__":
-    config = Config(CRAWLER_CONFIG_PATH)
+    config = Config(CRAWLER_DICTIONARY_CONFIG_PATH)
     crawler = BaseCrawlerPhraseologicalUnits(config)
     crawler.find_features()
     crawler.find_phraseological_units()

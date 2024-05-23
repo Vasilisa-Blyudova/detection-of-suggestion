@@ -18,7 +18,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from urllib3 import Retry
 
-from config.constants import CRAWLER_CONFIG_PATH, URL
+from config.constants import ANTONYMS_DICT, CRAWLER_DICTIONARY_CONFIG_PATH, URL
 from core_utils.config_dto import ConfigDTO
 from core_utils.scrapper import AbstractBaseCrawler
 
@@ -119,8 +119,7 @@ class BaseCrawlerAntonyms(AbstractBaseCrawler):
             url = self._extract_url(item)
             full_url_ = urljoin(self._config.get_seed_urls()[0], url)
             if full_url_ not in self.urls:
-               self.urls.append(full_url_)
-
+                self.urls.append(full_url_)
 
     def find_terms(self):
         for url in self.urls:
@@ -133,7 +132,7 @@ class BaseCrawlerAntonyms(AbstractBaseCrawler):
             soup = BeautifulSoup(request.text, features='html.parser')
 
             terms = soup.find('div', class_='terms-wrap').find_all('li')
-#             print(url)
+            #             print(url)
             more_terms = soup.find('ul', class_='arrow')
             if not more_terms:
                 continue
@@ -176,13 +175,15 @@ class BaseCrawlerAntonyms(AbstractBaseCrawler):
 
     def get_dictionary(self):
         dictionary = pd.DataFrame({'term': self.terms, 'antonyms': self.antonyms})
-        return dictionary.to_csv(Path('D:\Документы\В\]=-КР\detection-of-suggestion\\assets\\antonyms_dictionary.csv'), index=False)
+        return dictionary.to_csv(ANTONYMS_DICT,
+                                 index=False)
+
 
 if __name__ == "__main__":
-#     config = Config(CRAWLER_CONFIG_PATH)
-#     crawler = BaseCrawlerAntonyms(config)
-#     crawler.find_features()
-#     crawler.find_terms()
-#     crawler.find_antonyms()
-#     dictionary = crawler.get_dictionary()
+    #     config = Config(CRAWLER_CONFIG_PATH)
+    #     crawler = BaseCrawlerAntonyms(config)
+    #     crawler.find_features()
+    #     crawler.find_terms()
+    #     crawler.find_antonyms()
+    #     dictionary = crawler.get_dictionary()
     pass

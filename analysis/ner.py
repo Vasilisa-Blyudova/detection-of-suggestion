@@ -1,82 +1,74 @@
-# import json
-# import os
-# from pathlib import Path
-#
 import pandas as pd
-# import pymorphy2
-# import spacy
+import pymorphy2
+import spacy
 import stanza
-# import torch
-from deeppavlov import build_model, configs
-from natasha import (Doc, NewsEmbedding, NewsMorphTagger, NewsNERTagger,
-                     Segmenter)
+import torch
+from deeppavlov import build_model
+from natasha import Doc, NewsEmbedding, NewsNERTagger, Segmenter
 # from sparknlp.pretrained import PretrainedPipeline
-# from torch.utils.data import DataLoader, Dataset
-# from transformers import (AutoModelForTokenClassification, AutoTokenizer,
-#                           TFXLMRobertaForTokenClassification,
-#                           XLMRobertaForTokenClassification)
+from torch.utils.data import DataLoader, Dataset
+from transformers import AutoTokenizer, XLMRobertaForTokenClassification
 
-from config.constants import ASSETS_PATH, DATA_PATH
 from config.common import load_data
+from config.constants import DATA_PATH
 
-# import tensorflow as tf
 
 # xlm-roberta reference
 
-# class CustomDataset(Dataset):
-#
-#     def __init__(self, data: pd.DataFrame) -> None:
-#         self.data = data
-#
-#     def __len__(self) -> int:
-#         return len(self.data)
-#
-#     def __getitem__(self, index: int) -> tuple[str, ...]:
-#         return (str(self.data["wb_descriptions"].iloc[index]),)
-#
-#
-# class LLMPipeline:
-#     def __init__(self, model_name: str, dataset: CustomDataset,
-#                  batch_size: int, device: str) -> None:
-#         super(LLMPipeline, self).__init__()
-#
-#         self._dataset = dataset
-#
-#         self._model = XLMRobertaForTokenClassification.from_pretrained(model_name)
-#         self._tokenizer = AutoTokenizer.from_pretrained(model_name)
-#
-#         self._batch_size = batch_size
-#
-#     def infer_sample(self, sample: tuple[str, ...]):
-#         res = self._infer_batch(sample)
-#         return res
-#
-#     def infer_dataset(self) -> pd.DataFrame:
-#         predictions = []
-#         dataset_loader = DataLoader(self._dataset, batch_size=self._batch_size)
-#
-#         for batch_data in dataset_loader:
-#             predictions.append(self._infer_batch(batch_data))
-#         predictions_df = pd.DataFrame({"predictions": predictions})
-#
-#         return predictions_df
-#
-#     def _infer_batch(self, sample_batch) -> list[str]:
-#         inputs = self._tokenizer(
-#             sample_batch[0],
-#             add_special_tokens=False,
-#             padding=True,
-#             truncation=True,
-#             return_tensors="pt"
-#         )
-#         tokens = self._tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
-#         #         print(tokens)
-#
-#         logits = self._model(**inputs).logits
-#         predictions = torch.argmax(logits, dim=2)
-#
-#         predicted_tokens_classes = [self._model.config.id2label[t.item()] for t in predictions[0]]
-#         return predicted_tokens_classes
+class CustomDataset(Dataset):
+
+    def __init__(self, data: pd.DataFrame) -> None:
+        self.data = data
+
+    def __len__(self) -> int:
+        return len(self.data)
+
+    def __getitem__(self, index: int) -> tuple[str, ...]:
+        return (str(self.data["wb_descriptions"].iloc[index]),)
+
+
+class LLMPipeline:
+    def __init__(self, model_name: str, dataset: CustomDataset,
+                 batch_size: int, device: str) -> None:
+        super(LLMPipeline, self).__init__()
+
+        self._dataset = dataset
+
+        self._model = XLMRobertaForTokenClassification.from_pretrained(model_name)
+        self._tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+        self._batch_size = batch_size
+
+    def infer_sample(self, sample: tuple[str, ...]):
+        res = self._infer_batch(sample)
+        return res
+
+    def infer_dataset(self) -> pd.DataFrame:
+        predictions = []
+        dataset_loader = DataLoader(self._dataset, batch_size=self._batch_size)
+
+        for batch_data in dataset_loader:
+            predictions.append(self._infer_batch(batch_data))
+        predictions_df = pd.DataFrame({"predictions": predictions})
+
+        return predictions_df
+
+    def _infer_batch(self, sample_batch) -> list[str]:
+        inputs = self._tokenizer(
+            sample_batch[0],
+            add_special_tokens=False,
+            padding=True,
+            truncation=True,
+            return_tensors="pt"
+        )
+        tokens = self._tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
+        #         print(tokens)
+
+        logits = self._model(**inputs).logits
+        predictions = torch.argmax(logits, dim=2)
+
+        predicted_tokens_classes = [self._model.config.id2label[t.item()] for t in predictions[0]]
+        return predicted_tokens_classes
 
 
 # Stanza
@@ -136,23 +128,23 @@ def main():
     dataset = load_data(DATA_PATH)
 
     # xlm-roberta
-    # dataset = CustomDataset(dataset)
-    # device = 'cpu'
-    # batch_size = 1
-    # model = "FacebookAI/xlm-roberta-large-finetuned-conll03-english"
-    # pipeline = LLMPipeline(model, dataset, batch_size, device)
-    # # res = pipeline.infer_sample(next(iter(dataset)))
-    # predictions_df = pipeline.infer_dataset()
-    # print(predictions_df["predictions"])
+    dataset = CustomDataset(dataset)
+    device = 'cpu'
+    batch_size = 1
+    model = "FacebookAI/xlm-roberta-large-finetuned-conll03-english"
+    pipeline = LLMPipeline(model, dataset, batch_size, device)
+    # res = pipeline.infer_sample(next(iter(dataset)))
+    predictions_df = pipeline.infer_dataset()
+    print(predictions_df["predictions"])
 
-    for id, text in enumerate(dataset['wb_descriptions']):
-        print(f"{id}----------------------------------------")
-        # stanza
-        print(analyzes_stanza_ner(text))
-        # deeppavlov
-        print(analyzes_deeppavlov_ner(text))
-        # natasha
-        print(analyzes_natasha_ner(text))
+    # for id, text in enumerate(dataset['wb_descriptions'][:1]):
+    #     print(f"{id}----------------------------------------")
+    #     # stanza
+    #     print(analyzes_stanza_ner(text))
+    #     # deeppavlov
+    #     print(analyzes_deeppavlov_ner(text))
+    #     # natasha
+    #     print(analyzes_natasha_ner(text))
 
 
 if __name__ == "__main__":

@@ -1,10 +1,9 @@
-import pandas as pd
 import spacy
 from nltk.tokenize import word_tokenize
 
 from analysis.preprocessor import Preprocessor
-from config.constants import ASSETS_PATH, DATA_PATH
 from config.common import load_data
+from config.constants import ASSETS_PATH, DATA_PATH
 
 
 class Preprocessor:

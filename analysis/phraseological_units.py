@@ -1,8 +1,6 @@
-import pandas as pd
-
 from analysis.preprocessor import Preprocessor
-from config.constants import ASSETS_PATH, DATA_PATH
 from config.common import load_data
+from config.constants import ASSETS_PATH, DATA_PATH
 
 
 def detect_phraseological_units(phraseological_units_dictionary, text):

@@ -1,11 +1,10 @@
-import pandas as pd
 import pymorphy2
 import spacy
 import stanza
-from natasha import (Doc, NewsEmbedding, NewsMorphTagger,
-                     Segmenter)
-from config.constants import DATA_PATH
+from natasha import Doc, NewsEmbedding, NewsMorphTagger, Segmenter
+
 from config.common import load_data
+from config.constants import DATA_PATH
 
 
 def analyzes_pymorphy(tag, text):

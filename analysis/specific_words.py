@@ -6,10 +6,10 @@ from config.constants import ASSETS_PATH, DATA_PATH
 def detect_specific_meaning(dictionary, text):
     common_words = []
     for word in text:
-        #             print(word)
         if not dictionary.loc[(dictionary["слово"] == word) & (dictionary["рейтинг"] < 3), "рейтинг"].empty:
             common_words.append(word)
     return common_words
+
 
 def main():
     dataset = load_data(DATA_PATH)

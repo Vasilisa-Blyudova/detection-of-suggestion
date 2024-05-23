@@ -1,9 +1,8 @@
-import pandas as pd
 from pylats import lats
 from taaled import ld
 
-from config.constants import DATA_PATH
 from config.common import load_data
+from config.constants import DATA_PATH
 
 
 def change_param():
