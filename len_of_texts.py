@@ -27,8 +27,9 @@ def main():
         len_of_text.append(len(text.split()))
 
     print(len_of_text)
-    print(sum(len_of_text)/len(len_of_text))
+    print(sum(len_of_text) / len(len_of_text))
     print(sum(len_of_text))
+
 
 if __name__ == "__main__":
     main()

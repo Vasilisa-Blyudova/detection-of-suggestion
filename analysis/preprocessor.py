@@ -31,7 +31,8 @@ class Preprocessor:
         return self.texts_without_functional_pos
 
     def lemmatize(self):
-        nlp = spacy.load('en_core_web_sm', disable = ['parser', 'ner'])
+        # python -m spacy download ru_core_news_lg
+        nlp = spacy.load('ru_core_news_lg', disable = ['parser', 'ner'])
         for text in self.texts:
             doc = nlp(text.lower())
             lemmatized_text = [token.lemma_ for token in doc]

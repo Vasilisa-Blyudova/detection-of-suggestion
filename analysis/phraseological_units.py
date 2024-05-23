@@ -1,6 +1,6 @@
 from analysis.preprocessor import Preprocessor
 from config.common import load_data
-from config.constants import ASSETS_PATH, DATA_PATH
+from config.constants import PHRASEOLOGICAL_UNITS_DICT, DATA_PATH
 
 
 def detect_phraseological_units(phraseological_units_dictionary, text):
@@ -13,13 +13,13 @@ def detect_phraseological_units(phraseological_units_dictionary, text):
 
 def main():
     dataset = load_data(DATA_PATH)
-    phraseological_units_dictionary = load_data(ASSETS_PATH / "phraseological_units_dictionary.csv")
+    phraseological_units_dictionary = load_data(PHRASEOLOGICAL_UNITS_DICT)
 
     preprocessor = Preprocessor(dataset['wb_descriptions'])
     preprocessor.lemmatize()
     lemmatized_texts = preprocessor.get_lemmatizing()
 
-    for text in lemmatized_texts[:5]:
+    for text in lemmatized_texts:
         print(detect_phraseological_units(phraseological_units_dictionary, text))
 
 

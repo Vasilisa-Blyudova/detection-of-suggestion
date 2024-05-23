@@ -1,11 +1,8 @@
 import pandas as pd
-import pymorphy2
-import spacy
 import stanza
 import torch
 from deeppavlov import build_model
 from natasha import Doc, NewsEmbedding, NewsNERTagger, Segmenter
-# from sparknlp.pretrained import PretrainedPipeline
 from torch.utils.data import DataLoader, Dataset
 from transformers import AutoTokenizer, XLMRobertaForTokenClassification
 
@@ -137,14 +134,14 @@ def main():
     predictions_df = pipeline.infer_dataset()
     print(predictions_df["predictions"])
 
-    # for id, text in enumerate(dataset['wb_descriptions'][:1]):
-    #     print(f"{id}----------------------------------------")
-    #     # stanza
-    #     print(analyzes_stanza_ner(text))
-    #     # deeppavlov
-    #     print(analyzes_deeppavlov_ner(text))
-    #     # natasha
-    #     print(analyzes_natasha_ner(text))
+    for id, text in enumerate(dataset['wb_descriptions'][:1]):
+        print(f"{id}----------------------------------------")
+        # stanza
+        print(analyzes_stanza_ner(text))
+        # deeppavlov
+        print(analyzes_deeppavlov_ner(text))
+        # natasha
+        print(analyzes_natasha_ner(text))
 
 
 if __name__ == "__main__":

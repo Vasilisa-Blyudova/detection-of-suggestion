@@ -17,8 +17,12 @@ CRAWLER_DICTIONARY_CONFIG_PATH = PROJECT_ROOT / 'scrapper_dict_config.json'
 URL = 'https://dic.academic.ru'
 
 # Dictionaries
-ANTONYMS_DICT = ASSETS_PATH / 'antonyms_dictionary.csv'
-PHRASEOLOGICAL_UNITS_DICT = ASSETS_PATH / 'phraseological_units_dictionary.csv'
+ANTONYMS_DICT = ASSETS_PATH / 'dictionaries'/ 'antonyms_dictionary.csv'
+PHRASEOLOGICAL_UNITS_DICT = ASSETS_PATH / 'dictionaries'/ 'phraseological_units_dictionary.csv'
+SCECIFIC_WORDS_DICT = ASSETS_PATH / 'dictionaries'/ 'phraseological_units_dictionary.csv'
 
 # Models
 LOANWORDS_MODEL_WEIGHTS = UTILS_DIR / 'loanwords_model_weights'
+
+# Weights
+WEIGHTS = ASSETS_PATH / 'significance_weights.json'

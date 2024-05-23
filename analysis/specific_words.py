@@ -1,6 +1,6 @@
 from analysis.preprocessor import Preprocessor
 from config.common import load_data
-from config.constants import ASSETS_PATH, DATA_PATH
+from config.constants import ASSETS_PATH, DATA_PATH, SCECIFIC_WORDS_DICT
 
 
 def detect_specific_meaning(dictionary, text):
@@ -13,7 +13,7 @@ def detect_specific_meaning(dictionary, text):
 
 def main():
     dataset = load_data(DATA_PATH)
-    specific_words_dictionary = load_data(ASSETS_PATH / "specific_words_dictionary.xlsx", "xlsx")
+    specific_words_dictionary = load_data(SCECIFIC_WORDS_DICT, "xlsx")
 
     preprocessor = Preprocessor(dataset['wb_descriptions'])
     preprocessor.lemmatize()

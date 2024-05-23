@@ -21,8 +21,8 @@ def analyzes_pymorphy(tags: list, text):
 
 
 def analyzes_spacy(pos, text):
-    # python - m spacy download ru_core_news_sm
-    nlp = spacy.load("ru_core_news_sm")
+    # python - m spacy download ru_core_news_lg
+    nlp = spacy.load("ru_core_news_lg")
     doc = nlp(text)
 
     tokens = []

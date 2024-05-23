@@ -19,7 +19,7 @@ def analyzes_pymorphy(tag: set, text):
 
 
 def analyzes_spacy(pos, tag_name, tag_value, text):
-    nlp = spacy.load("ru_core_news_sm")
+    nlp = spacy.load("ru_core_news_lg")
     doc = nlp(text)
 
     tokens = []
