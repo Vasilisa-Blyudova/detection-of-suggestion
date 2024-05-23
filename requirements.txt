@@ -1,3 +1,4 @@
 uvicorn==0.18.3
 fastapi==0.89.0
 ipython==8.24.0
+pymorphy2==0.9.1
