@@ -3,14 +3,7 @@ from pylats import lats
 from taaled import ld
 
 from config.constants import DATA_PATH
-
-
-def load_data(path, format="csv"):
-    if format == 'csv':
-        data = pd.read_csv(path)
-    else:
-        data = pd.read_excel(path, engine="openpyxl")
-    return data
+from config.common import load_data
 
 
 def change_param():

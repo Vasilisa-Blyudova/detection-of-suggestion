@@ -2,18 +2,11 @@ import pandas as pd
 import pymorphy2
 import spacy
 import stanza
-from deeppavlov import build_model
-from natasha import (Doc, NewsEmbedding, NewsMorphTagger, NewsNERTagger,
+from natasha import (Doc, NewsEmbedding, NewsMorphTagger,
                      Segmenter)
-from config.constants import ASSETS_PATH, DATA_PATH
 
-
-def load_data(path, format="csv"):
-    if format == 'csv':
-        data = pd.read_csv(path)
-    else:
-        data = pd.read_excel(path, engine="openpyxl")
-    return data
+from config.common import load_data
+from config.constants import DATA_PATH
 
 
 def analyzes_pymorphy(tag: set, text):
@@ -21,6 +14,7 @@ def analyzes_pymorphy(tag: set, text):
     tokens = []
 
     for token in text.split():
+        print(morph.parse(token))
         if morph.parse(token) and tag in morph.parse(token)[0].tag:
             tokens.append(token)
 
@@ -34,6 +28,8 @@ def analyzes_spacy(pos, tag_name, tag_value, text):
     tokens = []
 
     for token in doc:
+        print(token.morph)
+        print(token.pos_)
         if token.pos_ == pos and \
                 token.morph.to_dict().get(tag_name) == tag_value:
             tokens.append(token)
@@ -66,6 +62,7 @@ def analyzes_natasha(pos, tag_name, tag_value, text):
     doc.segment(segmenter)
     doc.tag_morph(morph_tagger)
     for sentence in doc.sents:
+        print(sentence.morph.tokens)
         for token in sentence.morph.tokens:
             if token.pos == pos and token.feats.get(tag_name) == tag_value:
                 tokens.append(token.text)
@@ -76,15 +73,18 @@ def analyzes_natasha(pos, tag_name, tag_value, text):
 def main():
     dataset = load_data(DATA_PATH)
 
-    for text in dataset['wb_descriptions'][:10]:
-        print(analyzes_pymorphy({"ADJF", "Supr"}, text))
-        print(analyzes_spacy(pos="ADJ", tag_name="Degree", tag_value="Cmp", text=text))
-        print(analyzes_stanza(pos="VERB", tag="Degree=Cmp", text=text))
-        print(analyzes_natasha(pos="ADJ", tag_name="Degree", tag_value="Cmp", text=text))
-        print(analyzes_pymorphy({"ADJF", "Cmp2"}, text))
-        print(analyzes_spacy(pos="ADJ", tag_name="Degree", tag_value="Sup", text=text))
-        print(analyzes_stanza(pos="VERB", tag="Degree=Sup", text=text))
-        print(analyzes_natasha(pos="ADJ", tag_name="Degree", tag_value="Sup", text=text))
+    for id, text in enumerate(dataset['wb_descriptions'][:1]):
+        print(f"{id}----------------------------------------------")
+        print("Превосходная степень прилагательных")
+        print("result: ", analyzes_pymorphy({"ADJF", "Supr"}, text))
+        print("result: ", analyzes_spacy(pos="ADJ", tag_name="Degree", tag_value="Sup", text=text))
+        print("result: ", analyzes_stanza(pos="ADJ", tag="Degree=Sup", text=text))
+        print("result: ", analyzes_natasha(pos="ADJ", tag_name="Degree", tag_value="Sup", text=text))
+        print("Сравнительная степень прилагательных")
+        print("result: ", analyzes_pymorphy({"ADJF", "Cmp2"}, text))
+        print("result: ", analyzes_spacy(pos="ADJ", tag_name="Degree", tag_value="Cmp", text=text))
+        print("result: ", analyzes_stanza(pos="ADJ", tag="Degree=Cmp", text=text))
+        print("result: ", analyzes_natasha(pos="ADJ", tag_name="Degree", tag_value="Cmp", text=text))
 
 
 if __name__ == "__main__":

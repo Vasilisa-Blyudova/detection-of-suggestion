@@ -1,6 +1,5 @@
 import collections
 
-import nltk
 import pymorphy2
 import spacy
 from nltk.stem import SnowballStemmer
@@ -33,7 +32,6 @@ class Preprocessor:
 
     def lemmatize(self):
         nlp = spacy.load('en_core_web_sm', disable = ['parser', 'ner'])
-        lemmatized_texts = []
         for text in self.texts:
             doc = nlp(text.lower())
             lemmatized_text = [token.lemma_ for token in doc]

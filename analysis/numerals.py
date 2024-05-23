@@ -2,18 +2,10 @@ import pandas as pd
 import pymorphy2
 import spacy
 import stanza
-from deeppavlov import build_model
-from natasha import (Doc, NewsEmbedding, NewsMorphTagger, NewsNERTagger,
+from natasha import (Doc, NewsEmbedding, NewsMorphTagger,
                      Segmenter)
-from config.constants import ASSETS_PATH, DATA_PATH
-
-
-def load_data(path, format="csv"):
-    if format == 'csv':
-        data = pd.read_csv(path)
-    else:
-        data = pd.read_excel(path, engine="openpyxl")
-    return data
+from config.constants import DATA_PATH
+from config.common import load_data
 
 
 def analyzes_pymorphy(tags: list, text):
@@ -74,7 +66,8 @@ def analyzes_natasha(pos, text):
 def main():
     dataset = load_data(DATA_PATH)
 
-    for text in dataset['wb_descriptions'][:10]:
+    for id, text in enumerate(dataset['wb_descriptions']):
+        print(f"{id}----------------------------------------------")
         print(analyzes_pymorphy(["NUMR", "NUMB", "Anum"], text))
         print(analyzes_spacy("NUM", text))
         print(analyzes_stanza("NUM", text))

@@ -1,13 +1,10 @@
-from pathlib import Path
-
-import nltk
 import pandas as pd
-import pymorphy2
 import spacy
 from nltk.tokenize import word_tokenize
 
 from analysis.preprocessor import Preprocessor
 from config.constants import ASSETS_PATH, DATA_PATH
+from config.common import load_data
 
 
 class Preprocessor:
@@ -21,7 +18,7 @@ class Preprocessor:
             self.tokenized_texts.append(word_tokenize(text))
 
     def lemmatize(self):
-        nlp = spacy.load('ru_core_news_lg', disable = ['parser', 'ner'])
+        nlp = spacy.load('ru_core_news_lg', disable=['parser', 'ner'])
         lemmatized_texts = []
         for text in self.texts:
             doc = nlp(text.lower())
@@ -31,12 +28,6 @@ class Preprocessor:
     def get_lemmatized_texts(self):
         return self._lemmatized_texts
 
-def load_data(path, format="csv"):
-    if format == 'csv':
-        data = pd.read_csv(path)
-    else:
-        data = pd.read_excel(path, engine="openpyxl")
-    return data
 
 def detect_antonyms(antonyms_dictionary, text):
     antonyms = []
@@ -50,11 +41,12 @@ def detect_antonyms(antonyms_dictionary, text):
     for antonym in split_antonyms:
         if antonym in " ".join(text):
             common_antonym.append(antonym)
-#     print(common_antonym)
-#     if not common_antonym:
-#         self._result.append(0)
-#     self._result.append(1)
+    #     print(common_antonym)
+    #     if not common_antonym:
+    #         self._result.append(0)
+    #     self._result.append(1)
     return common_antonym
+
 
 def main():
     dataset = load_data(DATA_PATH)
