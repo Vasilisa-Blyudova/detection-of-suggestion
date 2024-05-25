@@ -1,8 +1,6 @@
 import numpy as np
 import torch
 import torch.nn.functional as F
-from sklearn.metrics import f1_score, precision_score, recall_score
-from tqdm.auto import tqdm
 from transformers import AutoModel, AutoTokenizer
 
 from config.common import load_data
@@ -49,56 +47,38 @@ def create_mask(full_txts, phrases, tokenizer, max_length=512):
     return all_maps
 
 
-def get_preds(layer, past_key_tensor, df, model, tokenizer,
-              threshold=0.8, dx=1, device='cpu'):
-    f1_scores = []
-    precision_scores = []
-    recall_scores = []
-    preds = []
-    for pos in tqdm(range(0, len(df), dx)):
-        txt = df['sentence'].values[pos:pos + dx].tolist()
-        word = df['form'].values[pos:pos + dx].tolist()
-        use_past = [x.repeat_interleave(len(txt), dim=1) for x in past_key_tensor]
-        toks = tokenizer(txt, truncation=True,
-                         max_length=512-past_key_tensor[0].shape[3], padding=True,
-                         return_tensors='pt').to(device)
-        att_mask = torch.cat([torch.ones(len(txt),
-                                         past_key_tensor[0].shape[3]).to(device),
-                              toks['attention_mask']], dim=1)
-        out = model(toks['input_ids'], attention_mask=att_mask,
-                    past_key_values=use_past)['last_hidden_state']
-        target = torch.tensor(create_mask(txt, word, tokenizer,
-                                          max_length=512-past_key_tensor[0].shape[3])).to(device)
-        out = layer(out)
-        mask = F.softmax(out, dim=-1)[:, :, 1]
-        mask = torch.where(mask >= threshold, 1, 0)
-        target[target == -100] = 0
-        precision_ner = precision_score(target.cpu().numpy().tolist()[0],
-                                        mask.cpu().numpy().tolist()[0], labels=[1],
-                                        average='binary', zero_division=0)
-        recall_ner = recall_score(target.cpu().numpy().tolist()[0],
-                                  mask.cpu().numpy().tolist()[0], labels=[1],
-                                  average='binary', zero_division=0)
-        f1_ner = f1_score(target.cpu().numpy().tolist()[0],
-                          mask.cpu().numpy().tolist()[0], labels=[1],
-                          average='binary', zero_division=0)
-        precision_scores.append(precision_ner)
-        recall_scores.append(recall_ner)
-        f1_scores.append(f1_ner)
-        pr = [tokenizer.decode(x, skip_special_tokens=True).strip()
-              for x in toks['input_ids'] * mask]
-        preds.extend(pr)
-    return f1_scores, precision_scores, recall_scores, preds
+def get_preds(layer, past_key_tensor, text, model, tokenizer,
+              threshold=0.8, device='cpu'):
+    toks = tokenizer(text,
+                     padding=True,
+                     max_length=512 - train_past[0].shape[3],
+                     truncation=True,
+                     return_tensors='pt').to(device)
+    inp_ids = toks['input_ids']
+    att_mask = torch.cat([torch.ones(1, past_key_tensor[0].shape[3]).to(device),
+                          toks['attention_mask']
+                          ], dim=1)
+    with torch.no_grad():
+        out = model(input_ids=inp_ids, attention_mask=att_mask, past_key_values=past_key_tensor)
+        lin_out = layer(out['last_hidden_state'])
+    mask = F.softmax(lin_out, dim=-1)[:, :, 1]
+    mask = torch.where(mask >= threshold, 1, 0)
+    pred = tokenizer.decode((inp_ids * mask)[0], skip_special_tokens=True).strip().split()
+
+    return pred
 
 
 if __name__ == '__main__':
     dataset = load_data(DATA_PATH)
     device = 'cpu'
     model_path = 'sberbank-ai/ruRoberta-large'
-    model = AutoModel.from_pretrained(LOANWORDS_MODEL_WEIGHTS).to(device)
+    model = AutoModel.from_pretrained(model_path).to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     train_past = torch.load(LOANWORDS_MODEL_WEIGHTS / "adapt_angls.pth")
     linear = torch.load(LOANWORDS_MODEL_WEIGHTS / "lin_angls.pth")
-    f1_val, precision_val, recall_val, preds = get_preds(layer=linear, past_key_tensor=train_past,
-                                                         df=dataset, model=model, tokenizer=tokenizer,
-                                                         threshold=0.8, dx=1, device=device)
+    for id, text in enumerate(dataset['wb_descriptions']):
+        print(f"{id}-----------------------------------------------")
+        pred = get_preds(layer=linear, past_key_tensor=train_past,
+                          text=text, model=model, tokenizer=tokenizer,
+                          threshold=0.8, device=device)
+        print(pred)

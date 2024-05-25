@@ -134,7 +134,7 @@ def main():
     predictions_df = pipeline.infer_dataset()
     print(predictions_df["predictions"])
 
-    for id, text in enumerate(dataset['wb_descriptions'][:1]):
+    for id, text in enumerate(dataset['wb_descriptions']):
         print(f"{id}----------------------------------------")
         # stanza
         print(analyzes_stanza_ner(text))

@@ -19,7 +19,7 @@ URL = 'https://dic.academic.ru'
 # Dictionaries
 ANTONYMS_DICT = ASSETS_PATH / 'dictionaries'/ 'antonyms_dictionary.csv'
 PHRASEOLOGICAL_UNITS_DICT = ASSETS_PATH / 'dictionaries'/ 'phraseological_units_dictionary.csv'
-SCECIFIC_WORDS_DICT = ASSETS_PATH / 'dictionaries'/ 'phraseological_units_dictionary.csv'
+SCECIFIC_WORDS_DICT = ASSETS_PATH / 'dictionaries'/ 'specific_words_dictionary.xlsx'
 
 # Models
 LOANWORDS_MODEL_WEIGHTS = UTILS_DIR / 'loanwords_model_weights'

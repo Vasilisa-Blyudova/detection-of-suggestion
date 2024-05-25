@@ -1,6 +1,6 @@
 from analysis.preprocessor import Preprocessor
 from config.common import load_data
-from config.constants import ASSETS_PATH, DATA_PATH, SCECIFIC_WORDS_DICT
+from config.constants import DATA_PATH, SCECIFIC_WORDS_DICT
 
 
 def detect_specific_meaning(dictionary, text):
