@@ -59,7 +59,7 @@ class LLMPipeline:
             return_tensors="pt"
         )
         tokens = self._tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
-        #         print(tokens)
+        print(tokens)
 
         logits = self._model(**inputs).logits
         predictions = torch.argmax(logits, dim=2)
@@ -130,7 +130,8 @@ def main():
     batch_size = 1
     model = "FacebookAI/xlm-roberta-large-finetuned-conll03-english"
     pipeline = LLMPipeline(model, dataset, batch_size, device)
-    # res = pipeline.infer_sample(next(iter(dataset)))
+    res = pipeline.infer_sample(next(iter(dataset)))
+    print(res)
     predictions_df = pipeline.infer_dataset()
     print(predictions_df["predictions"])
 
