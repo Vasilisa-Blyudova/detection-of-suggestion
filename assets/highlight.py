@@ -22,3 +22,7 @@ def get_icons_list(text):
 
 def get_score():
     return "85"
+
+
+def get_result():
+    return "текст суггестивный"
