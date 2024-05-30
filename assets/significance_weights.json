@@ -1,0 +1,12 @@
+{
+  "ner": 0.1621334385,
+  "specific words": 0.02987648162,
+  "loanwords": 0.1555681428,
+  "lexical repetitions": 0.07370519761,
+  "antonyms": 0.02989766824,
+  "numerals": 0.1678753404,
+  "phraseological units": 0.02678581843,
+  "imperative": 0.2058984718,
+  "adjectives": 0.07182808343,
+  "passiv voice": 0.0764313572
+}
