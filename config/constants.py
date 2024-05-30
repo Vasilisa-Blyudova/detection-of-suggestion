@@ -14,7 +14,9 @@ DATA_PATH = PROJECT_ROOT / 'dataset.csv'
 
 # Crawler
 CRAWLER_DICTIONARY_CONFIG_PATH = PROJECT_ROOT / 'scrapper_dict_config.json'
-URL = 'https://dic.academic.ru'
+DICT_URL = 'https://dic.academic.ru'
+CRAWLER_CONFIG_PATH = PROJECT_ROOT / 'scrapper_dynamic_config.json'
+WB_URL = 'https://www.wildberries.ru/'
 
 # Dictionaries
 ANTONYMS_DICT = ASSETS_PATH / 'dictionaries'/ 'antonyms_dictionary.csv'

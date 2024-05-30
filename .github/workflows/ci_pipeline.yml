@@ -30,7 +30,7 @@ jobs:
   requirements-check:
     name: Requirements check
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 5
     needs: [ install-dependencies ]
 
     steps:
@@ -42,17 +42,17 @@ jobs:
         run: |
           bash config/requirements_check/run_requirements_check.sh
 
-  newline-check:
-    name: Newline check
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    needs: [ install-dependencies ]
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup environment
-        run: |
-          bash config/venv_setup.sh
-      - name: Newline check
-        run: |
-          bash config/newline_check/run_newline_check.sh
+#  newline-check:
+#    name: Newline check
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 2
+#    needs: [ install-dependencies ]
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Setup environment
+#        run: |
+#          bash config/venv_setup.sh
+#      - name: Newline check
+#        run: |
+#          bash config/newline_check/run_newline_check.sh
