@@ -3,7 +3,7 @@ from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from assets.highlight import process_text, get_score, get_result
+from assets.highlight import highlight_words, get_score, get_result, get_icons_list
 
 app = FastAPI()
 
@@ -29,9 +29,9 @@ async def read_index(request: Request):
 
 @app.post("/analyze-text/")
 async def analyze_text(text: str = Form(...)):
-    binary_list = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+    binary_list = get_icons_list(text)
     icons = generate_icons(binary_list)
-    result_text = process_text(text)
-    score = get_score()
-    result = get_result()
+    result_text = highlight_words(text)
+    score = get_score(text)
+    result = get_result(score)
     return {"result_text": result_text, "icons": icons, "score": score, "result": result}

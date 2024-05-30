@@ -1,0 +1,58 @@
+name: "Check Pull Request"
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REPOSITORY_TYPE: private
+  GITHUB_REPOSITORY: ${{ github.repository }}
+  BRANCH_NAME: ${{ github.ref }}
+
+jobs:
+  install-dependencies:
+    name: Installing dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: bash config/venv_setup.sh
+
+  requirements-check:
+    name: Requirements check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [ install-dependencies ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup environment
+        run: |
+          bash config/venv_setup.sh
+      - name: Dependencies check
+        run: |
+          bash config/requirements_check/run_requirements_check.sh
+
+#  newline-check:
+#    name: Newline check
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 2
+#    needs: [ install-dependencies ]
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Setup environment
+#        run: |
+#          bash config/venv_setup.sh
+#      - name: Newline check
+#        run: |
+#          bash config/newline_check/run_newline_check.sh
