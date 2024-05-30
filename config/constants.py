@@ -27,4 +27,4 @@ SCECIFIC_WORDS_DICT = ASSETS_PATH / 'dictionaries'/ 'specific_words_dictionary.x
 LOANWORDS_MODEL_WEIGHTS = UTILS_DIR / 'loanwords_model_weights'
 
 # Weights
-WEIGHTS = ASSETS_PATH / 'significance_weights.json'
+WEIGHTS = ASSETS_PATH / 'settings.json'

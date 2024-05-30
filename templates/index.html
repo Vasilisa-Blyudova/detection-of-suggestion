@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suggestion Detection</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+      <div class="top">
+          <div class="input-container">
+              <textarea id="input-text" placeholder="Enter text here..."></textarea>
+          </div>
+          <div class="button-container">
+              <button id="analyze-button">Get result</button>
+          </div>
+          <div class="output-container">
+              <div id="output-text" class="output-text" placeholder="The result will appear here..."></div>
+          </div>
+      </div>
+      <div class="bottom">
+          <div class="table-container">
+          <table>
+              <tbody>
+                  {% set colors = ["#efbbcc", "#c7ddc7", "#d2e2ec", "#b3cbdd", "#dbff4c", "#ff99ff", "#ccccff", "#C6E2FF", "#8FFF33", "#FF3385"] %}
+                  {% set row_texts = ["Имена собственные", "Слова с конкретным значением", "Заимствованная лексика", "Лексические повторы", "Антонимы", "Числительные", "Устойчивые выражения", "Повелительное наклонение глаголов", "Прилагательные в сравнительной и превосходной степени", "Пассивный залог"] %}
+                  {% for i in range(10) %}
+                  <tr>
+                      <td style="background-color: {{ colors[i] }}"></td>
+                      <td>{{ row_texts[i] }}</td>
+                      <td>{{ icons[i] }}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+          </div>
+          <div class="score-container">
+               <div id="output-score" class="output-score-text"></div>
+          </div>
+      </div>
+  </div>
+  <script src="/static/main.js"></script>
+</body>
+</html>

@@ -46,10 +46,10 @@ def analyzes_spacy(text: str, pos: str = None, tag_name: str = None, tag_value: 
         if isinstance(pos, str):
             if token.pos_ == pos and \
                     token.morph.to_dict().get(tag_name) == tag_value:
-                tokens.append(token)
+                tokens.append(token.text)
         else:
             if token.morph.to_dict().get(tag_name) == tag_value:
-                tokens.append(token)
+                tokens.append(token.text)
 
     return tokens
 

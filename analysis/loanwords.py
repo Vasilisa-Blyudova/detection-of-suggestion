@@ -51,7 +51,7 @@ def get_preds(layer, past_key_tensor, text, model, tokenizer,
               threshold=0.8, device='cpu'):
     toks = tokenizer(text,
                      padding=True,
-                     max_length=512 - train_past[0].shape[3],
+                     max_length=512 - past_key_tensor[0].shape[3],
                      truncation=True,
                      return_tensors='pt').to(device)
     inp_ids = toks['input_ids']
@@ -68,17 +68,20 @@ def get_preds(layer, past_key_tensor, text, model, tokenizer,
     return pred
 
 
-if __name__ == '__main__':
-    dataset = load_data(DATA_PATH)
+def get_loanwords(text):
     device = 'cpu'
     model_path = 'sberbank-ai/ruRoberta-large'
     model = AutoModel.from_pretrained(model_path).to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     train_past = torch.load(LOANWORDS_MODEL_WEIGHTS / "adapt_angls.pth")
     linear = torch.load(LOANWORDS_MODEL_WEIGHTS / "lin_angls.pth")
+    return get_preds(layer=linear, past_key_tensor=train_past,
+                     text=text, model=model, tokenizer=tokenizer,
+                     threshold=0.8, device=device)
+
+
+if __name__ == '__main__':
+    dataset = load_data(DATA_PATH)
     for id, text in enumerate(dataset['wb_descriptions'][:25]):
         print(f"{id}-----------------------------------------------")
-        pred = get_preds(layer=linear, past_key_tensor=train_past,
-                          text=text, model=model, tokenizer=tokenizer,
-                          threshold=0.8, device=device)
-        print(pred)
+        get_loanwords(text)

@@ -16,6 +16,7 @@ def change_param():
 def calculate_mattr_index(text):
     clnsmpl = lats.Normalize(text, params=change_param())
     ldvals = ld.lexdiv(clnsmpl.toks)
+    print(type(ldvals.mattr))
 
     return ldvals.mattr
 
