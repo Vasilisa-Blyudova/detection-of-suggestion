@@ -76,7 +76,7 @@ if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     train_past = torch.load(LOANWORDS_MODEL_WEIGHTS / "adapt_angls.pth")
     linear = torch.load(LOANWORDS_MODEL_WEIGHTS / "lin_angls.pth")
-    for id, text in enumerate(dataset['wb_descriptions']):
+    for id, text in enumerate(dataset['wb_descriptions'][:25]):
         print(f"{id}-----------------------------------------------")
         pred = get_preds(layer=linear, past_key_tensor=train_past,
                           text=text, model=model, tokenizer=tokenizer,

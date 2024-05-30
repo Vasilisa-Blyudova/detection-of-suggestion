@@ -18,11 +18,12 @@ def main():
     dataset = load_data(DATA_PATH)
     antonyms_dictionary = load_data(ANTONYMS_DICT)
 
-    preprocessor = Preprocessor(dataset['wb_descriptions'])
+    preprocessor = Preprocessor(dataset['wb_descriptions'][:25])
     preprocessor.lemmatize()
     lemmatized_texts = preprocessor.get_lemmatizing()
 
-    for text in lemmatized_texts:
+    for id, text in enumerate(lemmatized_texts):
+        print(f"{id}------------------------------------")
         print(detect_antonyms(antonyms_dictionary, text))
 
 

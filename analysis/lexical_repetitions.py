@@ -23,7 +23,8 @@ def calculate_mattr_index(text):
 def main():
     dataset = load_data(DATA_PATH)
 
-    for text in dataset["wb_descriptions"]:
+    for id, text in enumerate(dataset["wb_descriptions"][:25]):
+        print(f"{id}-----------------------------------")
         print(calculate_mattr_index(text))
 
 

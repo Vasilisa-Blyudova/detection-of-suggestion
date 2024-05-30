@@ -19,7 +19,8 @@ def main():
     preprocessor.lemmatize()
     lemmatized_texts = preprocessor.get_lemmatizing()
 
-    for text in lemmatized_texts[:5]:
+    for id, text in enumerate(lemmatized_texts[:25]):
+        print(f"{id}-------------------------------------------------")
         print(detect_specific_meaning(specific_words_dictionary, text))
 
 
